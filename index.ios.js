@@ -18,8 +18,10 @@ import React, {
 StatusBar.setBarStyle('light-content');
 console.disableYellowBox = true; // This gets in the way!
 
+
+// imageSize is used to statically size <Image/> instances
 const windowDims = Dimensions.get('window'),
-      itemSize   = (windowDims.width / 2) - 20;
+      itemSize   = (windowDims.width / 2) - 20; 
 
 
 const placeholder = require('./images/placeholder.png');
@@ -27,17 +29,18 @@ const placeholder = require('./images/placeholder.png');
 
 const styles = StyleSheet.create({
     container : {
-        paddingTop     : 30,
-        justifyContent : 'center',
-        alignItems     : 'center',
-        backgroundColor: '#F5FCFF',
-        flexDirection  : 'row',
-        flexWrap       : 'wrap'
+        paddingTop      : 30,
+        justifyContent  : 'center',
+        alignItems      : 'center',
+        backgroundColor : '#F5FCFF',
+        flexDirection   : 'row',
+        flexWrap        : 'wrap'
     },
+
     child : {
-        width       : itemSize,
-        height      : itemSize,
-        margin      : 5
+        width  : itemSize,
+        height : itemSize,
+        margin : 7
     },
 
     topBar : {
@@ -45,7 +48,7 @@ const styles = StyleSheet.create({
         top             : 0, 
         height          : 25, 
         width           : windowDims.width, 
-        backgroundColor : 'rgba(0,0,0,1)'
+        backgroundColor : 'rgba(0,0,0,.8)'
     }
 });
 
@@ -55,15 +58,16 @@ class Placeholder extends Component {
         data : [] // empty data array
     };
 
-    // Self-bound callback
+    // Step #4 (Self-bound function)
     onAfterLoad = (data) => {
         this.setState({
             data : data.data
         });
     };
 
+    // Step #1
     componentWillMount() {
-        let url = 'http://api.giphy.com/v1/gifs/search?q=demoscene&api_key=dc6zaTOxFJmzC&limit=50';
+        let url = 'http://api.giphy.com/v1/gifs/search?q=javascript&api_key=dc6zaTOxFJmzC&limit=30&r=' + Math.random();
 
         // Initiate query, parse, then update view via callback
         fetch(url)
@@ -85,11 +89,15 @@ class Placeholder extends Component {
             source,
             item;
 
+        // Set of undefines so we can display palceholders
+        if (data.length == 0) {
+            data.length = length = 10;
+        }
 
         for (; i < length; i++) {
             item = data[i];
 
-            // We don't have data, so put mocks up
+            // We don't have an image, so put mocks up
             if (! item) {
                 source = placeholder
             }
@@ -101,6 +109,8 @@ class Placeholder extends Component {
                     height : itemSize
                 }
             }
+
+            console.log(source)
 
             images.push(
                 <Image style={styles.child} 
