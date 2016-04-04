@@ -1,8 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
-
 import React, {
     AppRegistry,
     Component,
@@ -23,9 +18,8 @@ console.disableYellowBox = true; // This gets in the way!
 const windowDims = Dimensions.get('window'),
       itemSize   = (windowDims.width / 2) - 20; 
 
-
+// This is *the* placeholder image to be used in steps #3 and #5
 const placeholder = require('./images/placeholder.png');
-
 
 const styles = StyleSheet.create({
     container : {
@@ -59,15 +53,19 @@ class Placeholder extends Component {
     };
 
     // Step #4 (Self-bound function)
+    // We will update the state of the application so that images can render
     onAfterLoad = (data) => {
         this.setState({
             data : data.data
         });
     };
 
-    // Step #1
+    // Step #1 & #2
+    // Here we’ll fetch JSON for images to be displayed
     componentWillMount() {
+        // The URL below has an 'r' parameter that is used as a 'cache buster' and is only intended for demonstration purposes
         let url = 'http://api.giphy.com/v1/gifs/search?q=javascript&api_key=dc6zaTOxFJmzC&limit=30&r=' + Math.random();
+        console.log('Loading data')
 
         // Initiate query, parse, then update view via callback
         fetch(url)
@@ -81,36 +79,38 @@ class Placeholder extends Component {
             });
     }
 
+    // This will be responsible for rendering the image components
     buildImages(data) {
         let images  = [],
             length  = data.length,
             i       = 0,
-            randVal = '?r=' + Math.random(),
+            randVal = '?r=' + Math.random(),  // Cache busting for testing only can be removed
             source,
             item;
 
-        // Set of undefines so we can display palceholders
+        // Empty array?
         if (data.length == 0) {
+            // This console.log() call can be removed.
+            console.log('Rendering placeholders');
+            // Fill the array with 10 undefines
             data.length = length = 10;
+        }
+        else {
+            // This else branch is here just for debugging and can be removed.
+            console.log(`Got data. Rendering ${length} images.`);
         }
 
         for (; i < length; i++) {
             item = data[i];
 
-            // We don't have an image, so put mocks up
-            if (! item) {
-                source = placeholder
-            }
             // For when we actually have data
-            else {
+            if (item) {
                 source = {
                     uri    : item.images.original_still.url + randVal, 
                     width  : itemSize, 
                     height : itemSize
                 }
             }
-
-            console.log(source)
 
             images.push(
                 <Image style={styles.child} 
